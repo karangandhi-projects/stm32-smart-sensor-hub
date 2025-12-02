@@ -1,13 +1,16 @@
 /**
  * @file log.c
  * @brief Logging implementation for Smart Sensor Hub.
+ *
+ * Provides formatted UART logging with timestamps and source metadata.
+ *
+ * @ingroup logging
  */
 
 #include "log.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 
 /**
  * @brief UART handle used for log output.
@@ -30,7 +33,7 @@ static LogLevel_t s_minLevel = LOG_LEVEL_INFO;
 static bool s_enabled = false;
 
 /**
- * @brief Maximum length of a single log line.
+ * @brief Maximum length of a single log line (excluding prefix).
  */
 #define LOG_MAX_MESSAGE_LENGTH   (256U)
 
@@ -38,7 +41,7 @@ static bool s_enabled = false;
  * @brief Converts a LogLevel_t to a short string tag.
  *
  * @param level Logging level.
- * @return const char* Pointer to a static string.
+ * @return Pointer to a static string.
  */
 static const char *Log_LevelToString(LogLevel_t level);
 
@@ -49,11 +52,17 @@ void Log_Init(UART_HandleTypeDef *huart)
     s_logUart = huart;
 }
 
+/**
+ * @brief Weak hook for external output notification.
+ *
+ * The CLI module overrides this function to redraw its prompt and
+ * input line each time a log message is printed, keeping the UART
+ * console looking like a dashboard.
+ */
 __attribute__((weak)) void CLI_OnExternalOutput(void)
 {
     /* Default implementation: do nothing. */
 }
-
 
 void Log_Print(LogLevel_t level,
                const char *file,
@@ -62,17 +71,17 @@ void Log_Print(LogLevel_t level,
                const char *fmt,
                ...)
 {
+    /* If logging is not initialized, do nothing. */
     if (s_logUart == NULL)
     {
-        /* Logging is not initialized yet, nothing to do. */
         return;
     }
 
-    /* 🔴 THIS IS THE CRITICAL FILTER 🔴 */
-     if ((s_logUart == NULL) || (!s_enabled) || (level < s_minLevel))
-     {
-         return;
-     }
+    /* Apply global filters: enabled flag and min log level. */
+    if ((!s_enabled) || (level < s_minLevel))
+    {
+        return;
+    }
 
     char buffer[LOG_MAX_MESSAGE_LENGTH];
     char logPrefix[96];
@@ -101,7 +110,7 @@ void Log_Print(LogLevel_t level,
         return;
     }
 
-    /* Move to column 0, then print prefix and message */
+    /* Move to column 0, then print prefix and message. */
     const char cr = '\r';
     (void)HAL_UART_Transmit(s_logUart,
                             (uint8_t *)&cr,
@@ -125,9 +134,13 @@ void Log_Print(LogLevel_t level,
                             (uint16_t)strlen(newline),
                             HAL_MAX_DELAY);
 
+    /* Notify any interested module (e.g., CLI) that new output occurred. */
     CLI_OnExternalOutput();
 }
 
+/**
+ * @brief Map a log level to a compact string tag.
+ */
 static const char *Log_LevelToString(LogLevel_t level)
 {
     switch (level)
