@@ -22,6 +22,14 @@ The **STM32 Smart Sensor Hub** is a professionally structured embedded firmware 
 
 This repository is built just like a real production firmware codebase.
 
+## 🚀 Current Status (Phase 2)
+
+- **Logging subsystem** over UART2 with timestamps and metadata.
+- **Cooperative Task Manager** for periodic task execution.
+- **Heartbeat Task** toggling the on-board LED and logging activity.
+- **Generic Sensor Interface** abstraction (`SensorIF_t`, `SensorData_t`).
+- **Simulated Temperature Sensor** generating a smooth sine-wave signal.
+- **Sensor Sampling Task** running every 1 second and logging structured readings.
 ---
 
 ## 🏗️ Architecture at a Glance
