@@ -1,0 +1,32 @@
+# STM32CubeIDE / STM32 project ignores
+
+# Build outputs
+Debug/
+Release/
+.build/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.srec
+*.su
+*.crf
+*.i
+
+# Eclipse / CubeIDE metadata
+.settings/
+.metadata/
+.cproject
+.project
+*.launch
+
+# Backup / temp files
+*~
+*.swp
+*.tmp
+*.log
+
+
