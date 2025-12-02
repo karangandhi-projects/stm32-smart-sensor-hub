@@ -171,3 +171,57 @@ Phase 1’s design is intentionally minimal, but it already anticipates:
 
 This layered architecture ensures that new features can be added without
 introducing tight coupling between unrelated parts of the system.
+
+---
+
+## 4. Sensor Abstraction Layer (Phase 2)
+
+Phase 2 introduces a **generic sensor interface** so that the application can
+interact with sensors in a hardware-agnostic way.
+
+### 4.1 Data & API Types
+
+Defined in `sensors/sensor_if.h`:
+
+- `SensorData_t`
+  - `float value` — scalar measurement (e.g., temperature in °C).
+  - `uint32_t timestamp` — time in ms (from `HAL_GetTick()`).
+
+- `SensorIF_t`
+  - `bool (*init)(void)` — initialize the sensor implementation.
+  - `bool (*read)(SensorData_t *outData)` — perform a measurement.
+
+- `const SensorIF_t *Sensor_GetInterface(void)`
+  - Returns a pointer to the currently active sensor implementation.
+
+### 4.2 Simulated Sensor Implementation
+
+The first implementation is a **simulated temperature sensor** located in
+`sensors/sensor_sim_temp.c`:
+
+- Uses `HAL_GetTick()` to compute elapsed time since startup.
+- Generates a synthetic temperature using a sine wave:
+  - `T(t) = 25.0°C + 3.0°C * sin(t / 2000 ms)`.
+- Fills `SensorData_t` with:
+  - `value` — simulated temperature.
+  - `timestamp` — current tick count in ms.
+
+`Sensor_GetInterface()` currently returns this simulated interface, but in later
+phases the same function can route to real I2C/SPI sensor drivers without
+changing any application code.
+
+### 4.3 Sensor Sampling Task
+
+The application layer defines a **Sensor Sampling Task** in `app/app_main.c`:
+
+- Registered with the Task Manager to run every 1000 ms.
+- On each execution:
+  1. Retrieves the active `SensorIF_t` via `Sensor_GetInterface()`.
+  2. Calls `sensorIF->read(&data)`.
+  3. Logs the reading using the logging subsystem.
+
+This task forms the core of the data path for future phases:
+- Real hardware sensors.
+- Filtering or averaging.
+- Anomaly detection or TinyML.
+- Uplink over UART/USB-CDC/BLE.
