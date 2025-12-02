@@ -145,7 +145,7 @@ Provides:
 This design makes it trivial to drop in real I²C/SPI/ADC sensors later
 without changing application code.
 
----
+Manages abstract power modes:
 
 ## 5. Power Management Layer (`power/`)
 

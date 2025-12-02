@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * @brief UART handle used for log output.
@@ -82,6 +83,12 @@ void Log_Print(LogLevel_t level,
     {
         return;
     }
+
+    /* 🔴 THIS IS THE CRITICAL FILTER 🔴 */
+     if ((s_logUart == NULL) || (!s_enabled) || (level < s_minLevel))
+     {
+         return;
+     }
 
     char buffer[LOG_MAX_MESSAGE_LENGTH];
     char logPrefix[96];

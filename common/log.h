@@ -52,6 +52,12 @@ typedef enum
  */
 void Log_Init(UART_HandleTypeDef *huart);
 
+void Log_SetLevel(LogLevel_t level);
+LogLevel_t Log_GetLevel(void);
+void Log_Enable(bool enable);
+bool Log_IsEnabled(void);
+
+
 /**
  * @brief Set the minimum log level.
  *
