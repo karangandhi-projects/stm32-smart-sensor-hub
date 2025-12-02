@@ -87,7 +87,7 @@ void Log_Print(LogLevel_t level,
                             (uint16_t)strlen(buffer),
                             HAL_MAX_DELAY);
 
-    const char newline[2] = "\r\n";
+    const char newline[] = "\r\n";
     (void)HAL_UART_Transmit(s_logUart,
                             (uint8_t *)newline,
                             (uint16_t)strlen(newline),

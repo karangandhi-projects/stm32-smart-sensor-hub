@@ -1,6 +1,6 @@
 # Smart Power-Managed Sensor Hub (STM32F446RE)
 
-This repository contains the **Phase 1** implementation of a modular embedded firmware project targeting the STM32 Nucleo-F446RE board.
+This repository contains the **Phase 2** implementation of a modular embedded firmware project targeting the STM32 Nucleo-F446RE board.
 
 The long‑term goal is to build a **Smart Power‑Managed Sensor Hub** that:
 - Integrates multiple sensors over I2C/SPI/UART/etc.
@@ -14,6 +14,14 @@ Phase 1 is focused purely on **infrastructure**:
 - A robust **logging system** over UART2.
 - A simple **heartbeat task** to prove the flow.
 
+## 🚀 Current Status (Phase 2)
+
+- **Logging subsystem** over UART2 with timestamps and metadata.
+- **Cooperative Task Manager** for periodic task execution.
+- **Heartbeat Task** toggling the on-board LED and logging activity.
+- **Generic Sensor Interface** abstraction (`SensorIF_t`, `SensorData_t`).
+- **Simulated Temperature Sensor** generating a smooth sine-wave signal.
+- **Sensor Sampling Task** running every 1 second and logging structured readings.
 ---
 
 ## 🚀 Phase 1 – Features
