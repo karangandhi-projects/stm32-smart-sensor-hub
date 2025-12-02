@@ -237,4 +237,4 @@ Ideal for Embedded/Firmware engineer roles.
 
 ## 📝 License
 
-MIT (pending your choice).
+MIT 
